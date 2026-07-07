@@ -1,6 +1,7 @@
 package com.sentinelcore.backend.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -18,14 +19,17 @@ public class Asset {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
-    private String assetName;
+   @NotBlank(message = "Asset Name is required")
+@Column(nullable = false)
+private String assetName;
 
-    @Column(nullable = false)
-    private String assetType;
+@NotBlank(message = "Asset Type is required")
+@Column(nullable = false)
+private String assetType;
 
-    @Column(nullable = false, unique = true)
-    private String ipAddress;
+@NotBlank(message = "IP Address is required")
+@Column(nullable = false, unique = true)
+private String ipAddress;
 
     private String operatingSystem;
 
@@ -33,5 +37,11 @@ public class Asset {
 
     private String status;
 
-    private LocalDateTime createdAt;
+    @Column(nullable = false, updatable = false)
+private LocalDateTime createdAt;
+
+@PrePersist
+public void prePersist() {
+    this.createdAt = LocalDateTime.now();
+}
 }

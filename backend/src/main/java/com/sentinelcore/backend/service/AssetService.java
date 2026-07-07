@@ -22,4 +22,27 @@ public class AssetService {
     public Asset saveAsset(Asset asset) {
         return assetRepository.save(asset);
     }
+    public Asset getAssetById(Long id) {
+    return assetRepository.findById(id).orElse(null);
+}
+public Asset updateAsset(Long id, Asset updatedAsset) {
+
+    Asset asset = assetRepository.findById(id).orElse(null);
+
+    if (asset != null) {
+        asset.setAssetName(updatedAsset.getAssetName());
+        asset.setAssetType(updatedAsset.getAssetType());
+        asset.setIpAddress(updatedAsset.getIpAddress());
+        asset.setOperatingSystem(updatedAsset.getOperatingSystem());
+        asset.setLocation(updatedAsset.getLocation());
+        asset.setStatus(updatedAsset.getStatus());
+
+        return assetRepository.save(asset);
+    }
+
+    return null;
+}
+public void deleteAsset(Long id) {
+    assetRepository.deleteById(id);
+}
 }
