@@ -7,19 +7,32 @@ import AssetForm from "../../components/forms/AssetForm";
 
 function Assets() {
   const [open, setOpen] = useState(false);
+  const [selectedAsset, setSelectedAsset] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
 
   const refreshAssets = () => {
     setRefreshKey((prev) => prev + 1);
   };
 
+  const handleAdd = () => {
+    setSelectedAsset(null);
+    setOpen(true);
+  };
+
+  const handleEdit = (asset) => {
+    setSelectedAsset(asset);
+    setOpen(true);
+  };
+
   return (
     <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
       <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={3}
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          mb: 3,
+        }}
       >
         <Typography variant="h4" fontWeight="bold">
           Asset Management
@@ -28,18 +41,22 @@ function Assets() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => setOpen(true)}
+          onClick={handleAdd}
         >
           Add Asset
         </Button>
       </Box>
 
-      <AssetTable refreshKey={refreshKey} />
+      <AssetTable
+        refreshKey={refreshKey}
+        onEdit={handleEdit}
+      />
 
       <AssetForm
         open={open}
         handleClose={() => setOpen(false)}
         refreshAssets={refreshAssets}
+        editAsset={selectedAsset}
       />
     </Container>
   );

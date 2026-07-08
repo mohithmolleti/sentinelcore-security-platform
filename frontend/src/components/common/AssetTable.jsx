@@ -15,16 +15,20 @@ import {
 } from "@mui/material";
 
 import { Edit, Delete } from "@mui/icons-material";
-import { getAllAssets } from "../../services/assetService";
 
-function AssetTable({ refreshKey }) {
+import {
+  getAllAssets,
+  deleteAsset,
+} from "../../services/assetService";
+
+function AssetTable({ refreshKey, onEdit }) {
   const [assets, setAssets] = useState([]);
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
-  loadAssets();
-}, [refreshKey]);
+    loadAssets();
+  }, [refreshKey]);
 
   const loadAssets = async () => {
     try {
@@ -52,12 +56,31 @@ function AssetTable({ refreshKey }) {
       case "running":
       case "healthy":
         return "success";
+
       case "warning":
         return "warning";
+
       case "critical":
         return "error";
+
       default:
         return "default";
+    }
+  };
+
+  const handleDelete = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this asset?"
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await deleteAsset(id);
+      loadAssets();
+    } catch (error) {
+      console.error(error);
+      alert("Failed to delete asset.");
     }
   };
 
@@ -85,7 +108,6 @@ function AssetTable({ refreshKey }) {
 
       <TableContainer>
         <Table>
-
           <TableHead>
             <TableRow>
               <TableCell><b>Name</b></TableCell>
@@ -103,13 +125,9 @@ function AssetTable({ refreshKey }) {
               <TableRow key={asset.id} hover>
 
                 <TableCell>{asset.assetName}</TableCell>
-
                 <TableCell>{asset.assetType}</TableCell>
-
                 <TableCell>{asset.ipAddress}</TableCell>
-
                 <TableCell>{asset.operatingSystem}</TableCell>
-
                 <TableCell>{asset.location}</TableCell>
 
                 <TableCell>
@@ -120,13 +138,21 @@ function AssetTable({ refreshKey }) {
                 </TableCell>
 
                 <TableCell align="center">
-                  <IconButton color="primary">
+
+                  <IconButton
+                    color="primary"
+                    onClick={() => onEdit(asset)}
+                  >
                     <Edit />
                   </IconButton>
 
-                  <IconButton color="error">
+                  <IconButton
+                    color="error"
+                    onClick={() => handleDelete(asset.id)}
+                  >
                     <Delete />
                   </IconButton>
+
                 </TableCell>
 
               </TableRow>

@@ -1,5 +1,4 @@
-import { useState } from "react";
-import { createAsset } from "../../services/assetService";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -11,15 +10,36 @@ import {
   MenuItem,
 } from "@mui/material";
 
-function AssetForm({ open, handleClose, refreshAssets }) {
-  const [asset, setAsset] = useState({
+import {
+  createAsset,
+  updateAsset,
+} from "../../services/assetService";
+
+function AssetForm({
+  open,
+  handleClose,
+  refreshAssets,
+  editAsset,
+}) {
+  const emptyAsset = {
+    id: "",
     assetName: "",
     assetType: "",
     ipAddress: "",
     operatingSystem: "",
     location: "",
     status: "Running",
-  });
+  };
+
+  const [asset, setAsset] = useState(emptyAsset);
+
+  useEffect(() => {
+    if (editAsset) {
+      setAsset(editAsset);
+    } else {
+      setAsset(emptyAsset);
+    }
+  }, [editAsset, open]);
 
   const handleChange = (e) => {
     setAsset({
@@ -29,28 +49,34 @@ function AssetForm({ open, handleClose, refreshAssets }) {
   };
 
   const handleSubmit = async () => {
-  try {
-    await createAsset(asset);
+    try {
+      if (asset.id) {
+        await updateAsset(asset.id, asset);
+      } else {
+        await createAsset(asset);
+      }
 
-    setAsset({
-      assetName: "",
-      assetType: "",
-      ipAddress: "",
-      operatingSystem: "",
-      location: "",
-      status: "Running",
-    });
+      refreshAssets();
 
-    refreshAssets();
-    handleClose();
-  } catch (error) {
-    console.error(error);
-    alert("Failed to create asset.");
-  }
-};
+      handleClose();
+
+      setAsset(emptyAsset);
+    } catch (error) {
+      console.error(error);
+      alert("Operation failed.");
+    }
+  };
+
   return (
-    <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-      <DialogTitle>Add New Asset</DialogTitle>
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="md"
+    >
+      <DialogTitle>
+        {asset.id ? "Edit Asset" : "Add New Asset"}
+      </DialogTitle>
 
       <DialogContent>
         <Grid container spacing={2} sx={{ mt: 1 }}>
@@ -133,7 +159,7 @@ function AssetForm({ open, handleClose, refreshAssets }) {
           variant="contained"
           onClick={handleSubmit}
         >
-          Save Asset
+          {asset.id ? "Update Asset" : "Save Asset"}
         </Button>
       </DialogActions>
     </Dialog>

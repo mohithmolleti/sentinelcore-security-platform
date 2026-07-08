@@ -14,4 +14,13 @@ export const createAsset = async (asset) => {
   return response.data.data;
 };
 
+export const updateAsset = async (id, asset) => {
+  const response = await API.put(`/assets/${id}`, asset);
+  return response.data.data;
+};
+
+export const deleteAsset = async (id) => {
+  await API.delete(`/assets/${id}`);
+};
+
 export default API;

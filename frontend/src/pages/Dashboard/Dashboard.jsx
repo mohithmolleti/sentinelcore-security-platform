@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Paper, Typography } from "@mui/material";
+import { Container, Grid } from "@mui/material";
 import {
   Computer,
   Warning,
@@ -10,99 +10,90 @@ import {
 import StatCard from "../../components/cards/StatCard";
 import OverviewChart from "../../components/charts/OverviewChart";
 import RecentAlerts from "../../components/cards/RecentAlerts";
-import { getAllAssets } from "../../services/assetService";
+
+import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
+import AssetDistributionChart from "../../components/dashboard/AssetDistributionChart";
+import RecentAssets from "../../components/dashboard/RecentAssets";
+
+import { getDashboardStats } from "../../services/dashboardService";
 
 function Dashboard() {
-  const [assetCount, setAssetCount] = useState(0);
+  const [stats, setStats] = useState({
+    totalAssets: 0,
+    healthyAssets: 0,
+    runningAssets: 0,
+    warningAssets: 0,
+    criticalAssets: 0,
+  });
 
   useEffect(() => {
-    loadAssets();
+    loadDashboard();
   }, []);
 
-  const loadAssets = async () => {
+  const loadDashboard = async () => {
     try {
-      const response = await getAllAssets();
-      setAssetCount(response.length);
+      const data = await getDashboardStats();
+      setStats(data);
     } catch (error) {
-      console.error("Failed to load assets:", error);
+      console.error(error);
     }
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
-      <Typography variant="h4" fontWeight="bold" mb={3}>
-        Security Dashboard
-      </Typography>
+    <Container maxWidth="xl" sx={{ mt: 2, mb: 5 }}>
+      <WelcomeBanner />
 
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 3 }}>
           <StatCard
             title="Total Assets"
-            value={assetCount}
+            value={stats.totalAssets}
             icon={<Computer />}
-            color="#1976d2"
+            color="#1976D2"
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
           <StatCard
-            title="Critical Alerts"
-            value="12"
-            icon={<Warning />}
-            color="#d32f2f"
-          />
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 3 }}>
-          <StatCard
-            title="Protected Assets"
-            value="231"
+            title="Running Assets"
+            value={stats.runningAssets}
             icon={<Security />}
-            color="#7b1fa2"
+            color="#00C853"
           />
         </Grid>
 
         <Grid size={{ xs: 12, md: 3 }}>
           <StatCard
             title="Healthy Assets"
-            value="236"
+            value={stats.healthyAssets}
             icon={<CheckCircle />}
-            color="#2e7d32"
+            color="#2E7D32"
           />
         </Grid>
 
-        <Grid size={{ xs: 12 }}>
-          <Paper sx={{ p: 3, borderRadius: 3 }}>
-            <Typography variant="h6" mb={2}>
-              Infrastructure Growth
-            </Typography>
-
-            <OverviewChart />
-          </Paper>
+        <Grid size={{ xs: 12, md: 3 }}>
+          <StatCard
+            title="Warning Assets"
+            value={stats.warningAssets}
+            icon={<Warning />}
+            color="#FFC107"
+          />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
+        <Grid size={{ xs: 12, lg: 8 }}>
+          <OverviewChart />
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <AssetDistributionChart />
+        </Grid>
+
+        <Grid size={{ xs: 12, lg: 6 }}>
           <RecentAlerts />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3, borderRadius: 3, height: "100%" }}>
-            <Typography variant="h6" mb={2}>
-              Asset Health
-            </Typography>
-
-            <Typography color="success.main">
-              🟢 Healthy : 236
-            </Typography>
-
-            <Typography color="warning.main" mt={1}>
-              🟡 Warning : 8
-            </Typography>
-
-            <Typography color="error.main" mt={1}>
-              🔴 Critical : 4
-            </Typography>
-          </Paper>
+        <Grid size={{ xs: 12, lg: 6 }}>
+          <RecentAssets />
         </Grid>
       </Grid>
     </Container>
