@@ -23,20 +23,27 @@ public class DashboardService {
         long totalAssets = assets.size();
 
         long healthyAssets = assets.stream()
-                .filter(asset -> "Healthy".equalsIgnoreCase(asset.getStatus()))
+                .filter(a -> "Healthy".equalsIgnoreCase(a.getStatus()))
                 .count();
 
         long runningAssets = assets.stream()
-                .filter(asset -> "Running".equalsIgnoreCase(asset.getStatus()))
+                .filter(a -> "Running".equalsIgnoreCase(a.getStatus()))
                 .count();
 
         long warningAssets = assets.stream()
-                .filter(asset -> "Warning".equalsIgnoreCase(asset.getStatus()))
+                .filter(a -> "Warning".equalsIgnoreCase(a.getStatus()))
                 .count();
 
         long criticalAssets = assets.stream()
-                .filter(asset -> "Critical".equalsIgnoreCase(asset.getStatus()))
+                .filter(a -> "Critical".equalsIgnoreCase(a.getStatus()))
                 .count();
+
+        List<DashboardStatsDTO.ChartData> distribution = List.of(
+                new DashboardStatsDTO.ChartData("Running", runningAssets),
+                new DashboardStatsDTO.ChartData("Healthy", healthyAssets),
+                new DashboardStatsDTO.ChartData("Warning", warningAssets),
+                new DashboardStatsDTO.ChartData("Critical", criticalAssets)
+        );
 
         return DashboardStatsDTO.builder()
                 .totalAssets(totalAssets)
@@ -44,6 +51,7 @@ public class DashboardService {
                 .runningAssets(runningAssets)
                 .warningAssets(warningAssets)
                 .criticalAssets(criticalAssets)
+                .assetDistribution(distribution)
                 .build();
     }
 }

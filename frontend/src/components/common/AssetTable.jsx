@@ -12,6 +12,11 @@ import {
   IconButton,
   TextField,
   Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
 } from "@mui/material";
 
 import { Edit, Delete } from "@mui/icons-material";
@@ -21,10 +26,21 @@ import {
   deleteAsset,
 } from "../../services/assetService";
 
+import AppSnackbar from "../common/AppSnackbar";
+
 function AssetTable({ refreshKey, onEdit }) {
   const [assets, setAssets] = useState([]);
   const [filteredAssets, setFilteredAssets] = useState([]);
   const [search, setSearch] = useState("");
+
+  const [deleteDialog, setDeleteDialog] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
 
   useEffect(() => {
     loadAssets();
@@ -37,6 +53,12 @@ function AssetTable({ refreshKey, onEdit }) {
       setFilteredAssets(data);
     } catch (error) {
       console.error(error);
+
+      setSnackbar({
+        open: true,
+        message: "Failed to load assets.",
+        severity: "error",
+      });
     }
   };
 
@@ -68,100 +90,150 @@ function AssetTable({ refreshKey, onEdit }) {
     }
   };
 
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this asset?"
-    );
+  const confirmDelete = (id) => {
+    setSelectedId(id);
+    setDeleteDialog(true);
+  };
 
-    if (!confirmDelete) return;
-
+  const handleDelete = async () => {
     try {
-      await deleteAsset(id);
+      await deleteAsset(selectedId);
+
+      setDeleteDialog(false);
+
+      setSnackbar({
+        open: true,
+        message: "Asset deleted successfully.",
+        severity: "success",
+      });
+
       loadAssets();
     } catch (error) {
       console.error(error);
-      alert("Failed to delete asset.");
+
+      setDeleteDialog(false);
+
+      setSnackbar({
+        open: true,
+        message: "Failed to delete asset.",
+        severity: "error",
+      });
     }
   };
 
   return (
-    <Paper sx={{ p: 3, borderRadius: 4 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h5" fontWeight="bold">
-          Assets
-        </Typography>
+    <>
+      <Paper sx={{ p: 3, borderRadius: 4 }}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+          }}
+        >
+          <Typography variant="h5" fontWeight="bold">
+            Assets
+          </Typography>
 
-        <TextField
-          label="Search Assets"
-          size="small"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </Box>
+          <TextField
+            label="Search Assets"
+            size="small"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </Box>
 
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell><b>Name</b></TableCell>
-              <TableCell><b>Type</b></TableCell>
-              <TableCell><b>IP Address</b></TableCell>
-              <TableCell><b>Operating System</b></TableCell>
-              <TableCell><b>Location</b></TableCell>
-              <TableCell><b>Status</b></TableCell>
-              <TableCell align="center"><b>Actions</b></TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {filteredAssets.map((asset) => (
-              <TableRow key={asset.id} hover>
-
-                <TableCell>{asset.assetName}</TableCell>
-                <TableCell>{asset.assetType}</TableCell>
-                <TableCell>{asset.ipAddress}</TableCell>
-                <TableCell>{asset.operatingSystem}</TableCell>
-                <TableCell>{asset.location}</TableCell>
-
-                <TableCell>
-                  <Chip
-                    label={asset.status}
-                    color={getStatusColor(asset.status)}
-                  />
-                </TableCell>
-
-                <TableCell align="center">
-
-                  <IconButton
-                    color="primary"
-                    onClick={() => onEdit(asset)}
-                  >
-                    <Edit />
-                  </IconButton>
-
-                  <IconButton
-                    color="error"
-                    onClick={() => handleDelete(asset.id)}
-                  >
-                    <Delete />
-                  </IconButton>
-
-                </TableCell>
-
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell><b>Name</b></TableCell>
+                <TableCell><b>Type</b></TableCell>
+                <TableCell><b>IP Address</b></TableCell>
+                <TableCell><b>Operating System</b></TableCell>
+                <TableCell><b>Location</b></TableCell>
+                <TableCell><b>Status</b></TableCell>
+                <TableCell align="center"><b>Actions</b></TableCell>
               </TableRow>
-            ))}
-          </TableBody>
+            </TableHead>
 
-        </Table>
-      </TableContainer>
-    </Paper>
+            <TableBody>
+              {filteredAssets.map((asset) => (
+                <TableRow key={asset.id} hover>
+                  <TableCell>{asset.assetName}</TableCell>
+                  <TableCell>{asset.assetType}</TableCell>
+                  <TableCell>{asset.ipAddress}</TableCell>
+                  <TableCell>{asset.operatingSystem}</TableCell>
+                  <TableCell>{asset.location}</TableCell>
+
+                  <TableCell>
+                    <Chip
+                      label={asset.status}
+                      color={getStatusColor(asset.status)}
+                    />
+                  </TableCell>
+
+                  <TableCell align="center">
+                    <IconButton
+                      color="primary"
+                      onClick={() => onEdit(asset)}
+                    >
+                      <Edit />
+                    </IconButton>
+
+                    <IconButton
+                      color="error"
+                      onClick={() => confirmDelete(asset.id)}
+                    >
+                      <Delete />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+
+          </Table>
+        </TableContainer>
+      </Paper>
+
+      <Dialog
+        open={deleteDialog}
+        onClose={() => setDeleteDialog(false)}
+      >
+        <DialogTitle>Delete Asset</DialogTitle>
+
+        <DialogContent>
+          Are you sure you want to delete this asset?
+        </DialogContent>
+
+        <DialogActions>
+          <Button onClick={() => setDeleteDialog(false)}>
+            Cancel
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={handleDelete}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      <AppSnackbar
+        open={snackbar.open}
+        message={snackbar.message}
+        severity={snackbar.severity}
+        handleClose={() =>
+          setSnackbar({
+            ...snackbar,
+            open: false,
+          })
+        }
+      />
+    </>
   );
 }
 

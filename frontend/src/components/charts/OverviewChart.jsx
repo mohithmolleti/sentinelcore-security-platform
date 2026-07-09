@@ -1,43 +1,69 @@
+import { useEffect, useState } from "react";
+import { Paper, Typography } from "@mui/material";
 import {
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
   CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
+  Legend,
+  Bar,
 } from "recharts";
 
-const data = [
-  { day: "Mon", assets: 210 },
-  { day: "Tue", assets: 218 },
-  { day: "Wed", assets: 225 },
-  { day: "Thu", assets: 232 },
-  { day: "Fri", assets: 236 },
-  { day: "Sat", assets: 242 },
-  { day: "Sun", assets: 248 },
-];
+import { getDashboardStats } from "../../services/dashboardService";
 
 function OverviewChart() {
+  const [chartData, setChartData] = useState([]);
+
+  useEffect(() => {
+    loadChart();
+  }, []);
+
+  const loadChart = async () => {
+    try {
+      const stats = await getDashboardStats();
+
+      setChartData([
+        {
+          category: "Running",
+          count: stats.runningAssets,
+        },
+        {
+          category: "Healthy",
+          count: stats.healthyAssets,
+        },
+        {
+          category: "Warning",
+          count: stats.warningAssets,
+        },
+        {
+          category: "Critical",
+          count: stats.criticalAssets,
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
-    <ResponsiveContainer width="100%" height={350}>
-      <LineChart data={data}>
-        <CartesianGrid strokeDasharray="3 3" />
+    <Paper sx={{ p: 3, borderRadius: 5, height: 420 }}>
+      <Typography variant="h6" fontWeight="bold" mb={3}>
+        Asset Status Overview
+      </Typography>
 
-        <XAxis dataKey="day" />
-
-        <YAxis />
-
-        <Tooltip />
-
-        <Line
-          type="monotone"
-          dataKey="assets"
-          stroke="#00C853"
-          strokeWidth={3}
-        />
-      </LineChart>
-    </ResponsiveContainer>
+      <ResponsiveContainer width="100%" height="90%">
+        <BarChart data={chartData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="category" />
+          <YAxis />
+          <Tooltip />
+          <Legend />
+          <Bar dataKey="count" fill="#1976D2" radius={[8, 8, 0, 0]} />
+        </BarChart>
+      </ResponsiveContainer>
+    </Paper>
   );
 }
 

@@ -14,7 +14,7 @@ function MainLayout({ children }) {
       <Box
         sx={{
           px: { xs: 2, md: 4 },
-          py: 3,
+          py: 4,
         }}
       >
         {children}
