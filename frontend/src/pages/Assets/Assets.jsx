@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container, Typography, Button, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import { useSearchParams } from "react-router-dom";
 
 import AssetTable from "../../components/common/AssetTable";
 import AssetForm from "../../components/forms/AssetForm";
@@ -9,6 +10,14 @@ function Assets() {
   const [open, setOpen] = useState(false);
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [refreshKey, setRefreshKey] = useState(0);
+
+  const [searchParams] = useSearchParams();
+  const [searchText, setSearchText] = useState("");
+
+  useEffect(() => {
+    const value = searchParams.get("search") || "";
+    setSearchText(value);
+  }, [searchParams]);
 
   const refreshAssets = () => {
     setRefreshKey((prev) => prev + 1);
@@ -34,9 +43,21 @@ function Assets() {
           mb: 3,
         }}
       >
-        <Typography variant="h4" fontWeight="bold">
-          Asset Management
-        </Typography>
+        <Box>
+          <Typography variant="h4" fontWeight="bold">
+            Asset Management
+          </Typography>
+
+          {searchText && (
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ mt: 0.5 }}
+            >
+              Searching for: <b>{searchText}</b>
+            </Typography>
+          )}
+        </Box>
 
         <Button
           variant="contained"
@@ -50,6 +71,7 @@ function Assets() {
       <AssetTable
         refreshKey={refreshKey}
         onEdit={handleEdit}
+        initialSearch={searchText}
       />
 
       <AssetForm

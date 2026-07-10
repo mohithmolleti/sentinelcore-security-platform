@@ -28,29 +28,55 @@ import {
 
 import AppSnackbar from "../common/AppSnackbar";
 
-function AssetTable({ refreshKey, onEdit }) {
+function AssetTable({
+  refreshKey,
+  onEdit,
+  initialSearch = "",
+}) {
   const [assets, setAssets] = useState([]);
   const [filteredAssets, setFilteredAssets] = useState([]);
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(initialSearch);
 
   const [deleteDialog, setDeleteDialog] = useState(false);
   const [selectedId, setSelectedId] = useState(null);
 
   const [snackbar, setSnackbar] = useState({
-    open: false,
-    message: "",
-    severity: "success",
-  });
+  open: false,
+  message: "",
+  severity: "success",
+});
 
-  useEffect(() => {
-    loadAssets();
-  }, [refreshKey]);
+useEffect(() => {
+  setSearch(initialSearch);
+}, [initialSearch]);
+
+useEffect(() => {
+  loadAssets();
+}, [refreshKey, initialSearch]);
 
   const loadAssets = async () => {
     try {
       const data = await getAllAssets();
       setAssets(data);
-      setFilteredAssets(data);
+
+if (initialSearch) {
+  const filtered = data.filter(
+    (asset) =>
+      asset.assetName
+        .toLowerCase()
+        .includes(initialSearch.toLowerCase()) ||
+      asset.assetType
+        .toLowerCase()
+        .includes(initialSearch.toLowerCase()) ||
+      asset.ipAddress
+        .toLowerCase()
+        .includes(initialSearch.toLowerCase())
+  );
+
+  setFilteredAssets(filtered);
+} else {
+  setFilteredAssets(data);
+}
     } catch (error) {
       console.error(error);
 
@@ -137,15 +163,22 @@ function AssetTable({ refreshKey, onEdit }) {
           </Typography>
 
           <TextField
-            label="Search Assets"
-            size="small"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+  label="Search Assets"
+  size="small"
+  value={search}
+  onChange={(e) => setSearch(e.target.value)}
+  sx={{
+    width: 300,
+  }}
+/>
         </Box>
 
-        <TableContainer>
-          <Table>
+        <TableContainer
+  sx={{
+    maxHeight: 600,
+  }}
+>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell><b>Name</b></TableCell>
@@ -169,23 +202,30 @@ function AssetTable({ refreshKey, onEdit }) {
 
                   <TableCell>
                     <Chip
-                      label={asset.status}
-                      color={getStatusColor(asset.status)}
-                    />
+  label={asset.status}
+  color={getStatusColor(asset.status)}
+  size="small"
+  sx={{
+    fontWeight: "bold",
+    minWidth: 90,
+  }}
+/>
                   </TableCell>
 
                   <TableCell align="center">
                     <IconButton
-                      color="primary"
-                      onClick={() => onEdit(asset)}
-                    >
+  color="primary"
+  size="small"
+  onClick={() => onEdit(asset)}
+>
                       <Edit />
                     </IconButton>
 
                     <IconButton
-                      color="error"
-                      onClick={() => confirmDelete(asset.id)}
-                    >
+  color="error"
+  size="small"
+  onClick={() => confirmDelete(asset.id)}
+>
                       <Delete />
                     </IconButton>
                   </TableCell>

@@ -9,7 +9,11 @@ import {
   TableBody,
   Chip,
   TableContainer,
+  Avatar,
+  Box,
 } from "@mui/material";
+
+import { Computer } from "@mui/icons-material";
 
 import { getAllAssets } from "../../services/assetService";
 
@@ -55,7 +59,8 @@ function RecentAssets() {
     <Paper
       sx={{
         p: 3,
-        borderRadius: 5,
+        borderRadius: 4,
+        height: "100%",
       }}
     >
       <Typography
@@ -68,39 +73,65 @@ function RecentAssets() {
 
       <TableContainer>
         <Table size="small">
-
           <TableHead>
             <TableRow>
-              <TableCell><b>Name</b></TableCell>
+              <TableCell><b>Asset</b></TableCell>
               <TableCell><b>Type</b></TableCell>
-              <TableCell><b>Status</b></TableCell>
+              <TableCell align="center"><b>Status</b></TableCell>
             </TableRow>
           </TableHead>
 
           <TableBody>
             {assets.map((asset) => (
-              <TableRow key={asset.id} hover>
-
+              <TableRow
+                key={asset.id}
+                hover
+                sx={{
+                  "&:last-child td": {
+                    borderBottom: 0,
+                  },
+                }}
+              >
                 <TableCell>
-                  {asset.assetName}
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    gap={1.5}
+                  >
+                    <Avatar
+                      sx={{
+                        bgcolor: "primary.main",
+                        width: 34,
+                        height: 34,
+                      }}
+                    >
+                      <Computer fontSize="small" />
+                    </Avatar>
+
+                    <Typography fontWeight={600}>
+                      {asset.assetName}
+                    </Typography>
+                  </Box>
                 </TableCell>
 
                 <TableCell>
                   {asset.assetType}
                 </TableCell>
 
-                <TableCell>
+                <TableCell align="center">
                   <Chip
                     label={asset.status}
                     color={getStatusColor(asset.status)}
                     size="small"
+                    sx={{
+                      minWidth: 85,
+                      fontWeight: "bold",
+                    }}
                   />
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
-
         </Table>
       </TableContainer>
     </Paper>

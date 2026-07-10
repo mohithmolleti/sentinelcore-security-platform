@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Container, Grid } from "@mui/material";
+import { Container, Grid, Typography, Box } from "@mui/material";
 import {
   Computer,
   Warning,
@@ -40,11 +40,11 @@ function Dashboard() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 2, mb: 5 }}>
+    <Container maxWidth="xl" sx={{ mt: 3, mb: 5 }}>
       <WelcomeBanner />
 
-      <Grid container spacing={3}>
-        <Grid size={{ xs: 12, md: 3 }}>
+      <Grid container spacing={3} sx={{ mt: 1 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
             title="Total Assets"
             value={stats.totalAssets}
@@ -53,7 +53,7 @@ function Dashboard() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
             title="Running Assets"
             value={stats.runningAssets}
@@ -62,7 +62,7 @@ function Dashboard() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
             title="Healthy Assets"
             value={stats.healthyAssets}
@@ -71,7 +71,7 @@ function Dashboard() {
           />
         </Grid>
 
-        <Grid size={{ xs: 12, md: 3 }}>
+        <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
             title="Warning Assets"
             value={stats.warningAssets}
@@ -89,10 +89,22 @@ function Dashboard() {
         </Grid>
 
         <Grid size={{ xs: 12, lg: 6 }}>
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="h6" fontWeight="bold">
+              Recent Alerts
+            </Typography>
+          </Box>
+
           <RecentAlerts />
         </Grid>
 
         <Grid size={{ xs: 12, lg: 6 }}>
+          <Box sx={{ mb: 1 }}>
+            <Typography variant="h6" fontWeight="bold">
+              Recent Assets
+            </Typography>
+          </Box>
+
           <RecentAssets />
         </Grid>
       </Grid>
