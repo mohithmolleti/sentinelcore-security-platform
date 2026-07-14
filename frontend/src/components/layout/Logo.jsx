@@ -7,12 +7,12 @@ function Logo() {
       <SecurityIcon
         sx={{
           color: "#00C853",
-          fontSize: 38,
+          fontSize: 34,
         }}
       />
 
       <Typography
-        variant="h4"
+        variant="h5"
         fontWeight="bold"
         sx={{
           letterSpacing: 1,

@@ -1,7 +1,41 @@
-import { Paper, Typography, Box } from "@mui/material";
+import {
+  Paper,
+  Typography,
+  Box,
+  Chip,
+  Stack,
+} from "@mui/material";
+
 import WavingHandIcon from "@mui/icons-material/WavingHand";
+import ComputerIcon from "@mui/icons-material/Computer";
+import SecurityIcon from "@mui/icons-material/Security";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+
+import { useEffect, useState } from "react";
+import { getDashboardStats } from "../../services/dashboardService";
 
 function WelcomeBanner() {
+  const [stats, setStats] = useState({
+    totalAssets: 0,
+    runningAssets: 0,
+    healthyAssets: 0,
+    warningAssets: 0,
+  });
+
+  useEffect(() => {
+    loadStats();
+  }, []);
+
+  const loadStats = async () => {
+    try {
+      const data = await getDashboardStats();
+      setStats(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const hour = new Date().getHours();
 
   let greeting = "Good Evening";
@@ -11,41 +45,67 @@ function WelcomeBanner() {
 
   return (
     <Paper
+      elevation={0}
       sx={{
-        p: 4,
-        mb: 4,
         borderRadius: 5,
+        p: 4,
+        mb: 3,
         background:
-          "linear-gradient(135deg,#00C853 0%, #1976D2 100%)",
+          "linear-gradient(135deg,#0F172A,#1E293B)",
         color: "white",
-        overflow: "hidden",
-        position: "relative",
+        border: "1px solid rgba(255,255,255,.08)",
       }}
     >
-      <Box sx={{ position: "relative", zIndex: 2 }}>
-        <Typography
-          variant="h4"
-          fontWeight="bold"
-          gutterBottom
-        >
-          {greeting}, Mohith{" "}
-          <WavingHandIcon
-            sx={{
-              verticalAlign: "middle",
-              color: "#FFD54F",
-            }}
-          />
-        </Typography>
+      <Typography
+        variant="h4"
+        fontWeight={700}
+      >
+        {greeting}, Mohith{" "}
+        <WavingHandIcon sx={{ color: "#FFC107" }} />
+      </Typography>
 
-        <Typography variant="h6">
-          Welcome back to SentinelCore Security Platform
-        </Typography>
+      <Typography
+        sx={{
+          mt: 1,
+          color: "rgba(255,255,255,.75)",
+        }}
+      >
+        Monitor, analyze and secure your infrastructure from one
+        unified dashboard.
+      </Typography>
 
-        <Typography sx={{ mt: 1, opacity: .9 }}>
-          Monitor your infrastructure, assets and security posture
-          in one unified dashboard.
-        </Typography>
-      </Box>
+      <Stack
+        direction="row"
+        spacing={2}
+        mt={4}
+        flexWrap="wrap"
+        useFlexGap
+      >
+        <Chip
+          icon={<ComputerIcon />}
+          label={`Assets : ${stats.totalAssets}`}
+          color="primary"
+        />
+
+        <Chip
+          icon={<SecurityIcon />}
+          label={`Running : ${stats.runningAssets}`}
+          color="success"
+        />
+
+        <Chip
+          icon={<CheckCircleIcon />}
+          label={`Healthy : ${stats.healthyAssets}`}
+          color="success"
+          variant="outlined"
+        />
+
+        <Chip
+          icon={<WarningAmberIcon />}
+          label={`Warnings : ${stats.warningAssets}`}
+          color="warning"
+        />
+      </Stack>
     </Paper>
   );
 }

@@ -2,18 +2,13 @@ import { useEffect, useState } from "react";
 import {
   Paper,
   Typography,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Chip,
-  TableContainer,
   Avatar,
   Box,
+  Chip,
+  Divider,
 } from "@mui/material";
 
-import { Computer } from "@mui/icons-material";
+import ComputerIcon from "@mui/icons-material/Computer";
 
 import { getAllAssets } from "../../services/assetService";
 
@@ -28,17 +23,17 @@ function RecentAssets() {
     try {
       const data = await getAllAssets();
 
-      const latestAssets = [...data]
-        .sort((a, b) => b.id - a.id)
-        .slice(0, 5);
-
-      setAssets(latestAssets);
-    } catch (error) {
-      console.error(error);
+      setAssets(
+        [...data]
+          .sort((a, b) => b.id - a.id)
+          .slice(0, 5)
+      );
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const getStatusColor = (status) => {
+  const getColor = (status) => {
     switch (status?.toLowerCase()) {
       case "running":
       case "healthy":
@@ -57,83 +52,77 @@ function RecentAssets() {
 
   return (
     <Paper
+      elevation={0}
       sx={{
         p: 3,
-        borderRadius: 4,
+        borderRadius: 5,
+        border: "1px solid",
+        borderColor: "divider",
         height: "100%",
       }}
     >
       <Typography
         variant="h6"
-        fontWeight="bold"
+        fontWeight={700}
         mb={2}
       >
-        Recent Assets
+        Recently Added Assets
       </Typography>
 
-      <TableContainer>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell><b>Asset</b></TableCell>
-              <TableCell><b>Type</b></TableCell>
-              <TableCell align="center"><b>Status</b></TableCell>
-            </TableRow>
-          </TableHead>
-
-          <TableBody>
-            {assets.map((asset) => (
-              <TableRow
-                key={asset.id}
-                hover
+      {assets.map((asset, index) => (
+        <Box key={asset.id}>
+          <Box
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            py={2}
+          >
+            <Box
+              display="flex"
+              alignItems="center"
+              gap={2}
+            >
+              <Avatar
                 sx={{
-                  "&:last-child td": {
-                    borderBottom: 0,
-                  },
+                  bgcolor: "primary.main",
+                  width: 48,
+                  height: 48,
                 }}
               >
-                <TableCell>
-                  <Box
-                    display="flex"
-                    alignItems="center"
-                    gap={1.5}
-                  >
-                    <Avatar
-                      sx={{
-                        bgcolor: "primary.main",
-                        width: 34,
-                        height: 34,
-                      }}
-                    >
-                      <Computer fontSize="small" />
-                    </Avatar>
+                <ComputerIcon />
+              </Avatar>
 
-                    <Typography fontWeight={600}>
-                      {asset.assetName}
-                    </Typography>
-                  </Box>
-                </TableCell>
+              <Box>
+                <Typography fontWeight={700}>
+                  {asset.assetName}
+                </Typography>
 
-                <TableCell>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                >
                   {asset.assetType}
-                </TableCell>
+                </Typography>
 
-                <TableCell align="center">
-                  <Chip
-                    label={asset.status}
-                    color={getStatusColor(asset.status)}
-                    size="small"
-                    sx={{
-                      minWidth: 85,
-                      fontWeight: "bold",
-                    }}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                >
+                  {asset.ipAddress}
+                </Typography>
+              </Box>
+            </Box>
+
+            <Chip
+              label={asset.status}
+              color={getColor(asset.status)}
+              size="small"
+            />
+          </Box>
+
+          {index !== assets.length - 1 && <Divider />}
+        </Box>
+      ))}
     </Paper>
   );
 }

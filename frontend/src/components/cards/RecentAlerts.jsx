@@ -8,12 +8,13 @@ import {
   Avatar,
   Chip,
   Divider,
+  Box,
 } from "@mui/material";
 
 import {
+  BugReport,
   WarningAmber,
   Security,
-  BugReport,
   SystemUpdate,
 } from "@mui/icons-material";
 
@@ -21,26 +22,30 @@ const alerts = [
   {
     title: "SQL Injection Attempt",
     severity: "Critical",
+    time: "2 min ago",
     icon: <BugReport />,
   },
   {
     title: "Malware Detected",
     severity: "High",
+    time: "8 min ago",
     icon: <Security />,
   },
   {
     title: "Multiple Failed Logins",
     severity: "Medium",
+    time: "18 min ago",
     icon: <WarningAmber />,
   },
   {
     title: "System Update Available",
     severity: "Low",
+    time: "1 hour ago",
     icon: <SystemUpdate />,
   },
 ];
 
-const getChipColor = (severity) => {
+const getColor = (severity) => {
   switch (severity) {
     case "Critical":
       return "error";
@@ -56,40 +61,40 @@ const getChipColor = (severity) => {
 function RecentAlerts() {
   return (
     <Paper
+      elevation={0}
       sx={{
         p: 3,
-        borderRadius: 4,
+        borderRadius: 5,
+        border: "1px solid",
+        borderColor: "divider",
         height: "100%",
       }}
     >
       <Typography
         variant="h6"
-        fontWeight="bold"
+        fontWeight={700}
         mb={2}
       >
-        Recent Alerts
+        Recent Security Alerts
       </Typography>
 
       <List disablePadding>
         {alerts.map((alert, index) => (
-          <div key={index}>
+          <Box key={index}>
             <ListItem
+              sx={{ py: 1.5 }}
               secondaryAction={
                 <Chip
                   label={alert.severity}
-                  color={getChipColor(alert.severity)}
+                  color={getColor(alert.severity)}
                   size="small"
-                  sx={{
-                    minWidth: 85,
-                    fontWeight: "bold",
-                  }}
                 />
               }
             >
               <ListItemAvatar>
                 <Avatar
                   sx={{
-                    bgcolor: `${getChipColor(alert.severity)}.main`,
+                    bgcolor: `${getColor(alert.severity)}.main`,
                   }}
                 >
                   {alert.icon}
@@ -97,18 +102,17 @@ function RecentAlerts() {
               </ListItemAvatar>
 
               <ListItemText
-                primary={alert.title}
-                secondary="Just now"
-                primaryTypographyProps={{
-                  fontWeight: 600,
-                }}
+                primary={
+                  <Typography fontWeight={600}>
+                    {alert.title}
+                  </Typography>
+                }
+                secondary={alert.time}
               />
             </ListItem>
 
-            {index !== alerts.length - 1 && (
-              <Divider />
-            )}
-          </div>
+            {index !== alerts.length - 1 && <Divider />}
+          </Box>
         ))}
       </List>
     </Paper>

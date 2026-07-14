@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Container, Typography, Button, Box } from "@mui/material";
+import { Typography, Button, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useSearchParams } from "react-router-dom";
 
@@ -34,7 +34,7 @@ function Assets() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 4, mb: 4 }}>
+    <Box sx={{ mt: 4, mb: 4, px: 3 }}>
       <Box
         sx={{
           display: "flex",
@@ -74,13 +74,13 @@ function Assets() {
         initialSearch={searchText}
       />
 
-      <AssetForm
+            <AssetForm
         open={open}
         handleClose={() => setOpen(false)}
         refreshAssets={refreshAssets}
         editAsset={selectedAsset}
       />
-    </Container>
+    </Box>
   );
 }
 

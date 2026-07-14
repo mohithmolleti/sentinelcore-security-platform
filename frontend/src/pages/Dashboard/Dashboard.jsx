@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Container, Grid, Typography, Box } from "@mui/material";
+import { Grid, Box } from "@mui/material";
+
 import {
   Computer,
   Warning,
@@ -7,12 +8,11 @@ import {
   CheckCircle,
 } from "@mui/icons-material";
 
+import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
 import StatCard from "../../components/cards/StatCard";
 import OverviewChart from "../../components/charts/OverviewChart";
-import RecentAlerts from "../../components/cards/RecentAlerts";
-
-import WelcomeBanner from "../../components/dashboard/WelcomeBanner";
 import AssetDistributionChart from "../../components/dashboard/AssetDistributionChart";
+import RecentAlerts from "../../components/cards/RecentAlerts";
 import RecentAssets from "../../components/dashboard/RecentAssets";
 
 import { getDashboardStats } from "../../services/dashboardService";
@@ -40,10 +40,17 @@ function Dashboard() {
   };
 
   return (
-    <Container maxWidth="xl" sx={{ mt: 3, mb: 5 }}>
+    <Box
+      sx={{
+        px: 3,
+        py: 3,
+      }}
+    >
       <WelcomeBanner />
 
-      <Grid container spacing={3} sx={{ mt: 1 }}>
+      <Grid container spacing={3} mt={0.5}>
+        {/* Stat Cards */}
+
         <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
           <StatCard
             title="Total Assets"
@@ -67,7 +74,7 @@ function Dashboard() {
             title="Healthy Assets"
             value={stats.healthyAssets}
             icon={<CheckCircle />}
-            color="#2E7D32"
+            color="#43A047"
           />
         </Grid>
 
@@ -76,39 +83,29 @@ function Dashboard() {
             title="Warning Assets"
             value={stats.warningAssets}
             icon={<Warning />}
-            color="#FFC107"
+            color="#FB8C00"
           />
         </Grid>
+
+        {/* Charts */}
 
         <Grid size={{ xs: 12, lg: 8 }}>
           <OverviewChart />
         </Grid>
 
         <Grid size={{ xs: 12, lg: 4 }}>
-          <AssetDistributionChart />
-        </Grid>
-
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="h6" fontWeight="bold">
-              Recent Alerts
-            </Typography>
-          </Box>
-
           <RecentAlerts />
         </Grid>
 
-        <Grid size={{ xs: 12, lg: 6 }}>
-          <Box sx={{ mb: 1 }}>
-            <Typography variant="h6" fontWeight="bold">
-              Recent Assets
-            </Typography>
-          </Box>
+        <Grid size={{ xs: 12, lg: 4 }}>
+          <AssetDistributionChart />
+        </Grid>
 
+        <Grid size={{ xs: 12, lg: 8 }}>
           <RecentAssets />
         </Grid>
       </Grid>
-    </Container>
+    </Box>
   );
 }
 

@@ -22,16 +22,13 @@ function SearchBar() {
   return (
     <Paper
       elevation={0}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        px: 2,
-        width: 380,
-        borderRadius: 4,
-        bgcolor: "background.paper",
-        border: "1px solid",
-        borderColor: "divider",
-      }}
+     sx={{
+  width: 340,
+  "& .MuiOutlinedInput-root": {
+    height: 46,
+    borderRadius: 10,
+  },
+}}
     >
       <InputBase
         sx={{ flex: 1 }}

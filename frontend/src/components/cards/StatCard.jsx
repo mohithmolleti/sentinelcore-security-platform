@@ -1,20 +1,28 @@
-import { Card, CardContent, Typography, Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Box,
+  Chip,
+} from "@mui/material";
+
+import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 
 function StatCard({ title, value, icon, color }) {
   return (
     <Card
       elevation={0}
       sx={{
-        height: 210,
+        height: 200,
         borderRadius: 5,
-        overflow: "hidden",
-        position: "relative",
-        background: "linear-gradient(135deg,#161B22 0%,#21262D 100%)",
-        border: "1px solid rgba(255,255,255,.08)",
-        transition: ".35s",
+        border: "1px solid",
+        borderColor: "divider",
+        bgcolor: "background.paper",
+        transition: "0.3s",
+        cursor: "pointer",
         "&:hover": {
           transform: "translateY(-6px)",
-          boxShadow: `0 18px 30px ${color}33`,
+          boxShadow: `0 15px 30px ${color}30`,
         },
       }}
     >
@@ -23,44 +31,72 @@ function StatCard({ title, value, icon, color }) {
           height: "100%",
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
         }}
       >
+        {/* Top */}
         <Box
-          sx={{
-            width: 60,
-            height: 60,
-            borderRadius: "50%",
-            background: `${color}22`,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color,
-            "& svg": {
-              fontSize: 36,
-            },
-          }}
+          display="flex"
+          justifyContent="space-between"
+          alignItems="center"
         >
-          {icon}
+          <Chip
+            icon={<TrendingUpIcon />}
+            label="+12%"
+            size="small"
+            color="success"
+          />
+
+          <Box
+            sx={{
+              width: 52,
+              height: 52,
+              borderRadius: 3,
+              bgcolor: `${color}22`,
+              color: color,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              "& svg": {
+                fontSize: 30,
+              },
+            }}
+          >
+            {icon}
+          </Box>
         </Box>
 
+        {/* Number */}
         <Typography
-          variant="body1"
-          color="text.secondary"
-          fontWeight={600}
+          sx={{
+            fontSize: 42,
+            fontWeight: 700,
+            mt: 3,
+            lineHeight: 1,
+          }}
+        >
+          {value}
+        </Typography>
+
+        {/* Title */}
+        <Typography
+          sx={{
+            mt: 1,
+            color: "text.secondary",
+            fontWeight: 600,
+            fontSize: 16,
+          }}
         >
           {title}
         </Typography>
 
+        <Box sx={{ flexGrow: 1 }} />
+
+        {/* Footer */}
         <Typography
-          variant="h2"
-          fontWeight="bold"
-          sx={{
-            lineHeight: 1,
-            mt: 1,
-          }}
+          variant="caption"
+          color="text.secondary"
         >
-          {value}
+          Updated just now
         </Typography>
       </CardContent>
     </Card>

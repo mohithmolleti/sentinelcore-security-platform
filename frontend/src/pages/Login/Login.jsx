@@ -6,9 +6,11 @@ import {
   TextField,
   Button,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 import SecurityIcon from "@mui/icons-material/Security";
 import { useNavigate } from "react-router-dom";
+
 import { login } from "../../services/authService";
 import AppSnackbar from "../../components/common/AppSnackbar";
 
@@ -18,19 +20,44 @@ function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  const [loading, setLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "error",
   });
 
-  const handleLogin = () => {
-    if (login(username, password)) {
-      navigate("/");
+  const handleLogin = async () => {
+    if (!username || !password) {
+      setSnackbar({
+        open: true,
+        message: "Please enter username and password",
+        severity: "warning",
+      });
+      return;
+    }
+
+    setLoading(true);
+
+    const result = await login(username, password);
+
+    setLoading(false);
+
+    if (result.success) {
+      setSnackbar({
+        open: true,
+        message: "Login Successful",
+        severity: "success",
+      });
+
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 700);
     } else {
       setSnackbar({
         open: true,
-        message: "Invalid username or password",
+        message: result.message,
         severity: "error",
       });
     }
@@ -84,32 +111,33 @@ function Login() {
           />
 
           <TextField
-            type="password"
             label="Password"
+            type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             fullWidth
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleLogin();
+              }
+            }}
           />
 
           <Button
             variant="contained"
             size="large"
             onClick={handleLogin}
+            disabled={loading}
           >
-            Login
+            {loading ? (
+              <CircularProgress
+                size={24}
+                color="inherit"
+              />
+            ) : (
+              "Login"
+            )}
           </Button>
-
-          <Typography
-            variant="body2"
-            align="center"
-            color="text.secondary"
-          >
-            Demo Credentials:
-            <br />
-            <b>Username:</b> admin
-            <br />
-            <b>Password:</b> admin123
-          </Typography>
         </Stack>
       </Paper>
 

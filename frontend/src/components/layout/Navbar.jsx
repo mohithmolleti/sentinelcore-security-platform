@@ -18,19 +18,17 @@ import {
   Settings,
 } from "@mui/icons-material";
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 import UserMenu from "./UserMenu";
 
 import { useThemeContext } from "../../context/ThemeContext";
-import { logout } from "../../services/authService";
 
 function Navbar() {
   const { mode, toggleTheme } = useThemeContext();
   const location = useLocation();
-  const navigate = useNavigate();
 
   const navItems = [
     {
@@ -60,11 +58,6 @@ function Navbar() {
     },
   ];
 
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
-
   return (
     <AppBar
       position="sticky"
@@ -72,34 +65,53 @@ function Navbar() {
       sx={{
         bgcolor: "background.paper",
         color: "text.primary",
-        borderBottom: "1px solid rgba(255,255,255,.08)",
+        borderBottom: "1px solid",
+        borderColor: "divider",
       }}
     >
-      <Toolbar sx={{ justifyContent: "space-between" }}>
-        <Box display="flex" alignItems="center" gap={4}>
+      <Toolbar
+        sx={{
+          minHeight: 68,
+          px: 4,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        {/* LEFT */}
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={5}
+        >
           <Logo />
 
-          <Box display="flex" gap={1}>
+          <Box
+            display="flex"
+            alignItems="center"
+            gap={1}
+          >
             {navItems.map((item) => (
               <Button
                 key={item.text}
                 component={Link}
                 to={item.path}
                 startIcon={item.icon}
-                color={
-                  location.pathname === item.path
-                    ? "primary"
-                    : "inherit"
-                }
                 variant={
                   location.pathname === item.path
                     ? "contained"
                     : "text"
                 }
+                color={
+                  location.pathname === item.path
+                    ? "primary"
+                    : "inherit"
+                }
                 sx={{
                   borderRadius: 3,
+                  px: 2.2,
                   textTransform: "none",
-                  fontWeight: 600,
+                  fontWeight: 700,
                 }}
               >
                 {item.text}
@@ -108,17 +120,23 @@ function Navbar() {
           </Box>
         </Box>
 
-        <Box display="flex" alignItems="center" gap={2}>
+        {/* RIGHT */}
+        <Box
+          display="flex"
+          alignItems="center"
+          gap={2}
+        >
           <SearchBar />
 
           <Badge
   badgeContent={3}
   color="error"
-  overlap="circular"
 >
   <IconButton
     sx={{
       bgcolor: "action.hover",
+      width: 42,
+      height: 42,
       "&:hover": {
         bgcolor: "action.selected",
       },
@@ -129,19 +147,14 @@ function Navbar() {
 </Badge>
 
           <IconButton onClick={toggleTheme}>
-            {mode === "dark" ? <LightMode /> : <DarkMode />}
+            {mode === "dark" ? (
+              <LightMode />
+            ) : (
+              <DarkMode />
+            )}
           </IconButton>
 
           <UserMenu />
-
-          <Button
-            variant="outlined"
-            color="error"
-            onClick={handleLogout}
-            sx={{ textTransform: "none" }}
-          >
-            Logout
-          </Button>
         </Box>
       </Toolbar>
     </AppBar>

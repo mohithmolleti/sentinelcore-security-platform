@@ -12,9 +12,11 @@ function MainLayout({ children }) {
       <Navbar />
 
       <Box
+        component="main"
         sx={{
-          px: { xs: 2, md: 4 },
-          py: 4,
+          width: "100%",
+          px: 2,
+          py: 3,
         }}
       >
         {children}

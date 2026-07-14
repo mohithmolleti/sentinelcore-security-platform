@@ -14,10 +14,15 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 
 import { useNavigate } from "react-router-dom";
-import { logout } from "../../services/authService";
+import {
+  logout,
+  getCurrentUser,
+} from "../../services/authService";
 
 function UserMenu() {
   const navigate = useNavigate();
+
+  const user = getCurrentUser();
 
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -36,42 +41,65 @@ function UserMenu() {
     navigate("/login");
   };
 
+  const fullName = user?.fullName || "Guest";
+  const role = user?.role || "USER";
+
   return (
     <>
       <Box
-        display="flex"
-        alignItems="center"
-        gap={1.5}
+        onClick={handleOpen}
         sx={{
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 1,
           cursor: "pointer",
+          px: 1.5,
+          py: 0.8,
           borderRadius: 3,
-          p: 1,
+          transition: ".2s",
           "&:hover": {
             bgcolor: "action.hover",
           },
         }}
-        onClick={handleOpen}
       >
         <Avatar
           sx={{
-            bgcolor: "primary.main",
-            width: 46,
-            height: 46,
+            width: 42,
+            height: 42,
+            bgcolor: "success.main",
+            fontWeight: "bold",
           }}
         >
-          M
+          {fullName.charAt(0).toUpperCase()}
         </Avatar>
 
-        <Box>
-          <Typography fontWeight="bold">
-            Mohith
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            lineHeight: 1.2,
+            pt: 0.3,
+          }}
+        >
+          <Typography
+            sx={{
+              fontWeight: 700,
+              fontSize: "0.95rem",
+            }}
+          >
+            {fullName}
           </Typography>
 
           <Typography
             variant="caption"
             color="text.secondary"
+            sx={{
+              textAlign: "left",
+              textTransform: "capitalize",
+            }}
           >
-            Administrator
+            {role}
           </Typography>
         </Box>
       </Box>
@@ -82,9 +110,9 @@ function UserMenu() {
         onClose={handleClose}
         PaperProps={{
           sx: {
+            mt: 1,
             width: 220,
             borderRadius: 3,
-            mt: 1,
           },
         }}
       >
@@ -92,7 +120,6 @@ function UserMenu() {
           <ListItemIcon>
             <PersonIcon fontSize="small" />
           </ListItemIcon>
-
           Profile
         </MenuItem>
 
@@ -105,7 +132,6 @@ function UserMenu() {
           <ListItemIcon>
             <SettingsIcon fontSize="small" />
           </ListItemIcon>
-
           Settings
         </MenuItem>
 
@@ -123,7 +149,6 @@ function UserMenu() {
               fontSize="small"
             />
           </ListItemIcon>
-
           Logout
         </MenuItem>
       </Menu>
