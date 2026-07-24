@@ -13,6 +13,7 @@ import {
   LightMode,
   Dashboard,
   Storage,
+  Group,
   Warning,
   Assessment,
   Settings,
@@ -56,6 +57,11 @@ function Navbar() {
       path: "/settings",
       icon: <Settings fontSize="small" />,
     },
+    {
+      text: "Users",
+      path: "/users",
+      icon: <Group fontSize="small" />,
+},
   ];
 
   return (

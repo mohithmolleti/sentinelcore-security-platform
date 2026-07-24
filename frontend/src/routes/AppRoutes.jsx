@@ -4,6 +4,7 @@ import MainLayout from "../layouts/MainLayout";
 
 import Dashboard from "../pages/Dashboard/Dashboard";
 import Assets from "../pages/Assets/Assets";
+import Users from "../pages/Users";
 import Login from "../pages/Login/Login";
 
 import ProtectedRoute from "../components/auth/ProtectedRoute";
@@ -36,6 +37,10 @@ function AppRoutes() {
                   <Route
                     path="/assets"
                     element={<Assets />}
+                  />
+                  <Route
+                    path="/users"
+                    element={<Users />}
                   />
 
                   <Route
